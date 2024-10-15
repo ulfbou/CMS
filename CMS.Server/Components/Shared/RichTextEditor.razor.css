@@ -1,0 +1,62 @@
+﻿// Generate css form the toolbar
+.editor-container .editor-toolbar button.rt-bold {
+    font-weight: 800 !important;
+}
+
+.editor-container .editor-toolbar button.rt-italic {
+    content: '\e07d'
+}
+
+.editor-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+    .editor-toolbar button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 15px;
+        font-size: 18px;
+        font-family: Open Sans, Arial, sans-serif;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+
+        .richtext-editor-toolbar button:hover {
+            background-color: #005cbf;
+        }
+
+        .richtext-editor-toolbar button:active {
+            background-color: #003580;
+        }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .richtext-editor-toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+        .richtext-editor-toolbar button {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+}
+
+/* Collapsible toolbar (optional) */
+.richtext-editor-toolbar-collapsed {
+    display: none;
+}
+
+.richtext-editor-toolbar-toggle {
+    display: block;
+    margin-right: 10px;
+}

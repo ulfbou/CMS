@@ -1,3 +1,4 @@
+@using CMS.Server.Components.Shared.UI
 @using CMS.Server.Models
 
 <h3>Skapa nya boxar:</h3>
@@ -142,24 +143,24 @@
         {
             <span style="border-radius:@($"{textModel.BorderRadius}px");
 
-                                                color:@($"{textModel.Color}");
-                                                font-size:@($"{textModel.FontSize}px");
+                                                                                                                                                                                                color:@($"{textModel.Color}");
+                                                                                                                                                                                                font-size:@($"{textModel.FontSize}px");
 
-                                                cursor: pointer;
-                                                background-color:@textModel.BackgroundColor;
-                                                padding:@($"{textModel.Padding}px");
-                                                border:@($"{textModel.BorderPix}px solid {textModel.BackgroundBorder}");">@textModel.Text</span>
+                                                                                                                                                                                                cursor: pointer;
+                                                                                                                                                                                                background-color:@textModel.BackgroundColor;
+                                                                                                                                                                                                padding:@($"{textModel.Padding}px");
+                                                                                                                                                                                                border:@($"{textModel.BorderPix}px solid {textModel.BackgroundBorder}");">@textModel.Text</span>
         }
         else if (box is ImageModel image)
         {
             <img src="@image.ImageUrl"
                  style="border-radius:@($"{image.BorderRadius}px");
-                                                height:@($"{image.Height}px");
-                                                width:@($"{image.Width}px");
-                                                cursor: pointer;
-                                                background-color:@image.BackgroundColor;
-                                                padding:@($"{image.Padding}px");
-                                                border:@($"{image.BorderPix}px solid {image.BackgroundBorder}");"
+                                                                                                                                                                                                height:@($"{image.Height}px");
+                                                                                                                                                                                                width:@($"{image.Width}px");
+                                                                                                                                                                                                cursor: pointer;
+                                                                                                                                                                                                background-color:@image.BackgroundColor;
+                                                                                                                                                                                                padding:@($"{image.Padding}px");
+                                                                                                                                                                                                border:@($"{image.BorderPix}px solid {image.BackgroundBorder}");"
                  alt="Image" />
 
 
@@ -178,118 +179,121 @@
     // Display only when not in edit mode
     @if (box.ShowEditButton)
     {
-        <button @onclick="() => ToggleEdit(box)">Spara</button>
-    ;
-        <div>
-            @if (box is ImageModel image)
-        {
+        <ConfirmationDialog @ref="@Confirmation" Title="Redigera" ConfirmationButtonText="Spara" CancelButtonText="Avbryt">
+            <button @onclick="() => ToggleEdit(box)">Spara</button>
+            ;
             <div>
-                <label>Image URL:</label>
-                <input type="text" @bind="@image.ImageUrl" />
-
-                <label>Height:</label>
-                <input type="number" @bind="@image.Height" />
-
-                <label>Width:</label>
-                <input type="number" @bind="@image.Width" />
-
-                <label>Border Radius:</label>
-                <input type="number" @bind="@image.BorderRadius" />
-
-                <label>BackgroundColor:</label>
-                <input type="color" @bind="@image.BackgroundColor" />
-
-                <label>BackgroundBorder:</label>
-                <input type="color" @bind="@image.BackgroundBorder" />
-
-                <label>Border Px:</label>
-                <input type="number" @bind="@image.BorderPix" />
-
-                <label>Background Padding:</label>
-                <input type="number" @bind="@image.Padding" />
-            </div>
-
-        }
-            @if (box is TextModel txtModel)
-        {
-            <div>
-                <label>Text:</label>
-                <input type="text" @bind="@txtModel.Text" />
-
-                <label>FontSize:</label>
-                <input type="number" @bind="@txtModel.FontSize" />
-
-
-
-                <label>Color:</label>
-                <input type="color" @bind="@txtModel.Color" />
-
-                <label>Background Padding:</label>
-                <input type="number" @bind="@txtModel.Padding" />
-
-                <label>BackgroundColor:</label>
-                <input type="color" @bind="@txtModel.BackgroundColor" />
-
-                <label>BackgroundBorder:</label>
-                <input type="color" @bind="@txtModel.BackgroundBorder" />
-
-                <label>Border Px:</label>
-                <input type="number" @bind="@txtModel.BorderPix" />
-
-                <label>Border Radius:</label>
-                <input type="number" @bind="@txtModel.BorderRadius" />
-
-
-            </div>
-
-        }
-
-            @if (parentContainer == null) // Only for top level
-        {
-            <select @onchange="(e) => ChangeTextAlign(box, e)" value="@box.TextAlign">
-                <option value="left">Vänster</option>
-                <option value="center">Center</option>
-                <option value="right">Höger</option>
-            </select>
-
-            <button @onclick="() => MoveBoxUp(box)">Flytta Upp</button>
-            <button @onclick="() => MoveBoxDown(box)">Flytta Ner</button>
-            <button @onclick="() => MoveBoxLeft(box)">Flytta Vänster</button>
-            <button @onclick="() => MoveBoxRight(box)">Flytta Höger</button>
-
-            <button @onclick="() => RemoveBox(box)">Ta bort box</button>
-        }
-        else // Inner boxes
-        {
-            <button @onclick="() => MoveInnerUp(box, parentContainer)">Flytta upp</button>
-            <button @onclick="() => MoveInnerDown(box, parentContainer)">Flytta ner</button>
-            <button @onclick="() => RemoveInnerBox(box, parentContainer)">Ta bort box</button>
-
-            <select @onchange="(e) => ChangeTextAlign(box, e)" value="@box.TextAlign">
-                <option value="left">Vänster</option>
-                <option value="center">Center</option>
-                <option value="right">Höger</option>
-            </select>
-
-            <select @onchange="(e) => ChangeContainer(box, e)" value="@box.SelectedContainerId">
-                <option value="">Välj Container</option>
-                @foreach (var c in containers)
+                @if (box is ImageModel image)
             {
-                <option value="@c.Id">@c.Title</option>
+                <div>
+                    <label>Image URL:</label>
+                    <input type="text" @bind="@image.ImageUrl" />
+
+                    <label>Height:</label>
+                    <input type="number" @bind="@image.Height" />
+
+                    <label>Width:</label>
+                    <input type="number" @bind="@image.Width" />
+
+                    <label>Border Radius:</label>
+                    <input type="number" @bind="@image.BorderRadius" />
+
+                    <label>BackgroundColor:</label>
+                    <input type="color" @bind="@image.BackgroundColor" />
+
+                    <label>BackgroundBorder:</label>
+                    <input type="color" @bind="@image.BackgroundBorder" />
+
+                    <label>Border Px:</label>
+                    <input type="number" @bind="@image.BorderPix" />
+
+                    <label>Background Padding:</label>
+                    <input type="number" @bind="@image.Padding" />
+                </div>
+
             }
-            </select>
-        }
-        </div>
+                @if (box is TextModel txtModel)
+            {
+                <div>
+                    <label>Text:</label>
+                    <input type="text" @bind="@txtModel.Text" />
+
+                    <label>FontSize:</label>
+                    <input type="number" @bind="@txtModel.FontSize" />
+
+
+
+                    <label>Color:</label>
+                    <input type="color" @bind="@txtModel.Color" />
+
+                    <label>Background Padding:</label>
+                    <input type="number" @bind="@txtModel.Padding" />
+
+                    <label>BackgroundColor:</label>
+                    <input type="color" @bind="@txtModel.BackgroundColor" />
+
+                    <label>BackgroundBorder:</label>
+                    <input type="color" @bind="@txtModel.BackgroundBorder" />
+
+                    <label>Border Px:</label>
+                    <input type="number" @bind="@txtModel.BorderPix" />
+
+                    <label>Border Radius:</label>
+                    <input type="number" @bind="@txtModel.BorderRadius" />
+
+
+                </div>
+
+            }
+
+                @if (parentContainer == null) // Only for top level
+            {
+                <select @onchange="(e) => ChangeTextAlign(box, e)" value="@box.TextAlign">
+                    <option value="left">Vänster</option>
+                    <option value="center">Center</option>
+                    <option value="right">Höger</option>
+                </select>
+
+                <button @onclick="() => MoveBoxUp(box)">Flytta Upp</button>
+                <button @onclick="() => MoveBoxDown(box)">Flytta Ner</button>
+                <button @onclick="() => MoveBoxLeft(box)">Flytta Vänster</button>
+                <button @onclick="() => MoveBoxRight(box)">Flytta Höger</button>
+
+                <button @onclick="() => RemoveBox(box)">Ta bort box</button>
+            }
+            else // Inner boxes
+            {
+                <button @onclick="() => MoveInnerUp(box, parentContainer)">Flytta upp</button>
+                <button @onclick="() => MoveInnerDown(box, parentContainer)">Flytta ner</button>
+                <button @onclick="() => RemoveInnerBox(box, parentContainer)">Ta bort box</button>
+
+                <select @onchange="(e) => ChangeTextAlign(box, e)" value="@box.TextAlign">
+                    <option value="left">Vänster</option>
+                    <option value="center">Center</option>
+                    <option value="right">Höger</option>
+                </select>
+
+                <select @onchange="(e) => ChangeContainer(box, e)" value="@box.SelectedContainerId">
+                    <option value="">Välj Container</option>
+                    @foreach (var c in containers)
+                {
+                    <option value="@c.Id">@c.Title</option>
+                }
+                </select>
+            }
+            </div>
+        </ConfirmationDialog>
+    Confirmation?.Show();
     }
     }
 
     @if (box is SectionModel container)
     {
         <ul style="background-color:@container.BackgroundColor;
-                                                        height:@($"{container.Height}px");
+                                                                                                                                                                                                        height:@($"{container.Height}px");
 
 
-                                                        border:@($"{container.BorderPix}px solid {container.BackgroundBorder}");">
+                                                                                                                                                                                                        border:@($"{container.BorderPix}px solid {container.BackgroundBorder}");">
 
 
 
