@@ -1,0 +1,144 @@
+﻿@using CMS.Server.Components.Shared.UI
+@using PSC.Blazor.Components.MarkdownEditor
+@using PSC.Blazor.Components.MarkdownEditor.Enums
+
+<ConfirmationDialog @ref="Confirmation"
+                    ConfirmationButtonText="Spara"
+                    CancelButtonText="Avbryt"
+                    OnConfirm="async () => await SaveAsync()"
+                    OnCancel="Cancel">
+    @if (_showEditor)
+    {
+        <div class="richtext-editor-container">
+            <div class="richtext-editor">
+                <MarkdownEditor @bind-Value="Content"
+                                ValueHTMLChanged="OnMarkdownValueChanged"
+                                SpellChecker="false"
+                                Theme="@EditorTheme"
+                                CustomButtonClicked="@OnCustomButtonClicked">
+                    <Toolbar>
+                        <!-- Basic formatting: bold and italic -->
+                        <div class="editor-group">
+                            <MarkdownToolbarButton Action="MarkdownAction.Bold" Title="Bold" />
+                            <MarkdownToolbarButton Action="MarkdownAction.Italic" Title="Italic" />
+                            <MarkdownToolbarButton Action="MarkdownAction.Strikethrough" Title="Strikethrough" />
+                        </div>
+                        <!-- Headings -->
+                        <div class="editor-group">
+                            <MarkdownToolbarButton Action="MarkdownAction.Heading" Title="Heading" />
+                            <MarkdownToolbarButton Action="MarkdownAction.HeadingSmaller" Title="HeadingSmaller" />
+                            <MarkdownToolbarButton Action="MarkdownAction.HeadingBigger" Title="HeadingBigger" />
+                            <MarkdownToolbarButton Action="MarkdownAction.Heading1" Title="Heading1" />
+                            <MarkdownToolbarButton Action="MarkdownAction.Heading2" Title="Heading2" />
+                            <MarkdownToolbarButton Action="MarkdownAction.Heading3" Title="Heading3" />
+                        </div>
+                        <!-- Lists -->
+                        <div class="editor-group">
+                            <MarkdownToolbarButton Action="MarkdownAction.UnorderedList" Title="UnorderedList" />
+                            <MarkdownToolbarButton Action="MarkdownAction.OrderedList" Title="OrderedList" />
+                            <MarkdownToolbarButton Action="MarkdownAction.CleanBlock" Title="CleanBlock" />
+                        </div>
+                        <!-- Blocks -->
+                        <div class="editor-group">
+                            <MarkdownToolbarButton Action="MarkdownAction.Code" Title="Code" />
+                            <MarkdownToolbarButton Action="MarkdownAction.Quote" Title="Quote" />
+                        </div>
+                        <!-- Links, images, and videos -->
+                        <div class="editor-group">
+                            <MarkdownToolbarButton Action="MarkdownAction.Link" Icon="fa fa-link" Name="Link" Value="@("Link")" Title="Insert Link" />
+                            <MarkdownToolbarButton Action="MarkdownAction.Image" Icon="fa fa-image" Name="Image" Value="@("Image")" Title="Insert Image" />
+                            <MarkdownToolbarButton Action="MarkdownAction.Custom" Icon="fa fa-video" Name="Video" Value="@("Video")" Title="Insert Video" />
+                            <button class="markdown-button" @onclick="HandleLinkClick">
+                                <i class="fa fa-link"></i>
+                            </button>
+                            <button class="markdown-button" @onclick="HandleImageClick">
+                                <i class="fa fa-picture-o"></i>
+                            </button>
+                            <button class="markdown-button" @onclick="HandleVideoClick">
+                                <i class="fa fa-video-camera"></i>
+                            </button>
+                        </div>
+                        <!-- Miscellaneous -->
+                        <div class="editor-group">
+                            <MarkdownToolbarButton Action="MarkdownAction.HorizontalRule" Title="Insert Horizontal Rule" />
+                        </div>
+                        <!-- Editor Configuration -->
+                        <div class="editor-group">
+                            <MarkdownToolbarButton Action="MarkdownAction.Preview" Title="Preview" />
+                            <MarkdownToolbarButton Action="MarkdownAction.SideBySide" Title="SideBySide" />
+                            <MarkdownToolbarButton Action="MarkdownAction.Fullscreen" Title="Fullscreen" />
+                            <MarkdownToolbarButton Action="MarkdownAction.Guide" Title="Guide" />
+                        </div>
+                        <!-- Custom -->
+                        <div class="editor-group">
+                            <button type="button" class="btn btn-sm btn-secondary" @onclick="Save">Save</button>
+                            <button type="button" class="btn btn-sm btn-danger" @onclick="OnCancel">Cancel</button>
+                        </div>
+
+                        <!-- Basic Formatting -->
+                        <MarkdownToolbarButton Action="MarkdownAction.Bold" Icon="rt-bold" Title="Bold" />
+                        <MarkdownToolbarButton Action="MarkdownAction.Italic" Icon="rt-italic" Title="Italic" />
+                        <MarkdownToolbarButton Action="MarkdownAction.Strikethrough" Icon="rt-strikethrough" Title="Strikethrough" />
+                        <MarkdownToolbarSeparator />
+
+                        <!-- Headings -->
+                        <MarkdownToolbarButton Action="MarkdownAction.HeadingSmaller" Icon="rt-heading-smaller" Title="Smaller Heading" />
+                        <MarkdownToolbarButton Action="MarkdownAction.HeadingBigger" Icon="rt-heading-bigger" Title="Bigger Heading" />
+                        <MarkdownToolbarSeparator />
+
+                        <!-- Lists -->
+                        <MarkdownToolbarButton Action="MarkdownAction.UnorderedList" Icon="rt-list-ul" Title="Bulleted List" />
+                        <MarkdownToolbarButton Action="MarkdownAction.OrderedList" Icon="rt-list-ol" Title="Numbered List" />
+                        <MarkdownToolbarSeparator />
+
+                        <!-- Links and Images -->
+                        <MarkdownToolbarButton Action="MarkdownAction.Custom" Icon="rt-image" Title="Insert Image" />
+                        <MarkdownToolbarButton Action="MarkdownAction.Custom" Icon="rt-link" Title="Insert Link" />
+                        <MarkdownToolbarSeparator />
+
+                        <!-- Code and Quotes -->
+                        <MarkdownToolbarButton Action="MarkdownAction.Code" Icon="rt-code" Title="Insert Code" />
+                        <MarkdownToolbarButton Action="MarkdownAction.Quote" Icon="rt-quote" Title="Insert Quote" />
+                        <MarkdownToolbarSeparator />
+
+                        <!-- Preview Toggle -->
+                        <MarkdownToolbarButton Action="MarkdownAction.Preview" Icon="rt-eye" Title="Toggle Preview" />
+                    </Toolbar>
+                </MarkdownEditor>
+
+                <!-- Image Insertion Dialog -->
+                <ConfirmationDialog @ref="ImageConfirmation"
+                                    Title="Add image"
+                                    ConfirmationButtonText="Add image"
+                                    CancelButtonText="Cancel"
+                                    ConfirmationMessage="Add image"
+                                    OnConfirm="OnConfirmInsert"
+                                    OnCancel="() => Cancel(ImageConfirmation)">
+                    <input @bind="ImageUrl" placeholder="Enter image url" />
+                    <input @bind="ImageText" placeholder="Enter image text" />
+                    <button @onclick="OnConfirmInsert">Insert</button>
+                    <button @onclick="OnCancelInsert">Cancel</button>
+                </ConfirmationDialog>
+
+                <!-- Link Insertion Dialog -->
+                @if (@LinkModel != null)
+                {
+
+                }
+                <ConfirmationDialog @ref="LinkConfirmation"
+                                    Title="Add link"
+                                    ConfirmationButtonText="Add Link"
+                                    ConfirmationMessage="Add Link"
+                                    OnConfirm="OnConfirmInsert"
+                                    OnCancel="OnCancelInsert">
+                    <input @bind="LinkModel.Url" placeholder="Link URL" />
+                    <input @bind="LinkModel.Text" placeholder="Link Text" />
+                </ConfirmationDialog>
+            </div>
+            @if (ChildContent != null)
+            {
+                @ChildContent
+            }
+        </div>
+    }
+</ConfirmationDialog>
