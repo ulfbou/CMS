@@ -1,0 +1,458 @@
+@using DragAndDropProject.Models
+
+<h3>Skapa nya boxar:</h3>
+<button @onclick="ToggleButtonsVisibility">
+    @(showButtons ? "Dölj Knappar" : "Visa Knappar")
+</button>
+
+@if (showButtons)
+{
+    <button @onclick="AddTextModel">Lägg till Text Box</button>
+    <button @onclick="AddImageModel">Lägg till Image Box</button>
+    <button @onclick="AddContainer">Lägg till Container</button>
+    
+    <button @onclick="ClearAll">Rensa Alla Boxar</button>
+}
+
+<div class="box-grid">
+    @foreach (var box in boxes)
+    {
+        <div style="grid-row: @box.Row; grid-column: @box.Column;">
+            @RenderContentItem(box, null) 
+        </div>
+    }
+</div>
+
+
+@code {
+    [Parameter]
+    public EventCallback<ContentModel> OnBoxSelected { get; set; }
+
+    private List<ContentModel> boxes = new List<ContentModel>();
+    private List<SectionModel> containers = new List<SectionModel>();
+    private int nextId = 1; // Startar från 1 för enklare nummer
+    private bool showButtons = true;
+
+    protected override void OnInitialized()
+    {
+        // Lägg till några förvalda boxar och containrar
+        boxes.Add(new TextModel { Id = nextId++, Text = "Text Box 1" });
+        boxes.Add(new ImageModel { Id = nextId++, ImageUrl = "https://via.placeholder.com/100" });
+        boxes.Add(new TextModel { Id = nextId++, Text = "Text Box 2" });
+        boxes.Add(new ImageModel { Id = nextId++, ImageUrl = "https://via.placeholder.com/100" });
+
+        // Startar containrar med unika ID:n
+        containers.Add(new SectionModel { Id = nextId++, Title = "Container 1", InnerBoxes = new List<ContentModel>() });
+        containers.Add(new SectionModel { Id = nextId++, Title = "Container 2", InnerBoxes = new List<ContentModel>() });
+    }
+
+     private void ClearAll()
+    {
+        boxes.Clear(); // Rensa alla boxar
+        containers.Clear(); // Rensa alla containrar
+        nextId = 1; // Återställ ID-tellern om du vill börja om från början
+    }
+
+    private void ToggleButtonsVisibility()
+    {
+        showButtons = !showButtons;
+    }
+
+    private void AddTextModel()
+{
+    boxes.Add(new TextModel { Id = nextId++, Text = $"Text Box {nextId}" });
+}
+
+private void AddImageModel()
+{
+    boxes.Add(new ImageModel { Id = nextId++, ImageUrl = "https://via.placeholder.com/100"});
+}
+
+<!-- private void MoveBoxUp(ContentModel box)
+{
+    if (box.Row > 1)
+    {
+        box.Row--;
+    }
+}
+
+private void MoveBoxDown(ContentModel box)
+{
+    box.Row++;
+}
+
+private void MoveBoxLeft(ContentModel box)
+{
+    if (box.Column > 1)
+    {
+        box.Column--;
+    }
+}
+
+private void MoveBoxRight(ContentModel box)
+{
+    box.Column++;
+} -->
+private void MoveBox(ContentModel box, int rowChange, int columnChange)
+{
+    int oldRow = box.Row;
+    int oldColumn = box.Column;
+
+    // Calculate new position
+    int newRow = oldRow + rowChange;
+    int newColumn = oldColumn + columnChange;
+
+    if (IsValidPosition(newRow, newColumn))
+    {
+        box.Row = newRow;
+        box.Column = newColumn;
+        Console.WriteLine($"Moved box {box.Id} to new position: Row {newRow}, Column {newColumn}"); // Debugging
+    }
+    else
+    {
+        Console.WriteLine($"Invalid move for box {box.Id}: Row {newRow}, Column {newColumn}"); // Debugging
+    }
+}
+
+
+private bool IsValidPosition(int row, int column)
+{
+    // Set your grid boundaries, e.g., maxRows and maxColumns
+    const int maxRows = 15; // example value
+    const int maxColumns = 5; // example value
+    return row > 0 && column > 0 && row <= maxRows && column <= maxColumns;
+}
+
+
+private void MoveBoxUp(ContentModel box) => MoveBox(box, -1, 0);
+private void MoveBoxDown(ContentModel box) => MoveBox(box, 1, 0);
+private void MoveBoxLeft(ContentModel box) => MoveBox(box, 0, -1);
+private void MoveBoxRight(ContentModel box) => MoveBox(box, 0, 1);
+
+    private void AddContainer()
+    {
+        var newContainer = new SectionModel { Id = nextId++, Title = $"Container {nextId - 1}", InnerBoxes = new List<ContentModel>() };
+        boxes.Add(newContainer);
+        containers.Add(newContainer);
+    }
+
+private RenderFragment RenderContentItem(ContentModel box, SectionModel? parentContainer) => @<li>
+    <div @onclick="() => HandleImageClick(box)" style="text-align:@box.TextAlign;">
+        @if (box is TextModel textModel)
+        {
+            <span 
+            style="border-radius:@($"{textModel.BorderRadius}px"); 
+            
+            color:@($"{textModel.Color}"); 
+            font-size:@($"{textModel.FontSize}px"); 
+            
+            cursor: pointer; 
+            background-color:@textModel.BackgroundColor; 
+            padding:@($"{textModel.Padding}px"); 
+            border:@($"{textModel.BorderPix}px solid {textModel.BackgroundBorder}");" 
+            >@textModel.Text</span>
+        }
+        else if (box is ImageModel image)
+        {
+            <img src="@image.ImageUrl" 
+            style="border-radius:@($"{image.BorderRadius}px"); 
+            height:@($"{image.Height}px"); 
+            width:@($"{image.Width}px"); 
+            cursor: pointer; 
+            background-color:@image.BackgroundColor; 
+            padding:@($"{image.Padding}px"); 
+            border:@($"{image.BorderPix}px solid {image.BackgroundBorder}");" 
+            alt="Image" />
+
+                 
+        }
+    </div>
+
+    @if (box.IsEditing)
+    {
+        
+        
+        <button @onclick="() => Changes(box)">Ändra</button>
+        <button @onclick="() => Save(box)">Spara</button>
+    }
+    else
+    {
+        // Display only when not in edit mode
+        @if (box.ShowEditButton)
+        {
+            <button @onclick="() => ToggleEdit(box)">Spara</button>;
+            <div>
+                @if (box is ImageModel image)
+        {
+            <div>
+                <label>Image URL:</label>
+                <input type="text" @bind="@image.ImageUrl" />
+
+                <label>Height:</label>
+                <input type="number" @bind="@image.Height" />
+
+                <label>Width:</label>
+                <input type="number" @bind="@image.Width" />
+
+                <label>Border Radius:</label>
+                <input type="number" @bind="@image.BorderRadius" />
+
+                <label>BackgroundColor:</label>
+                <input type="color" @bind="@image.BackgroundColor" />
+
+                <label>BackgroundBorder:</label>
+                <input type="color" @bind="@image.BackgroundBorder" />
+
+                <label>Border Px:</label>
+                <input type="number" @bind="@image.BorderPix" />
+
+                <label>Background Padding:</label>
+                <input type="number" @bind="@image.Padding" />
+            </div>
+            
+        }
+        @if (box is TextModel txtModel)
+        {
+            <div>
+                <label>Text:</label>
+                <input type="text" @bind="@txtModel.Text" />
+
+                <label>FontSize:</label>
+                <input type="number" @bind="@txtModel.FontSize" />
+
+                
+
+                <label>Color:</label>
+                <input type="color" @bind="@txtModel.Color" />
+
+                <label>Background Padding:</label>
+                <input type="number" @bind="@txtModel.Padding" />
+
+                <label>BackgroundColor:</label>
+                <input type="color" @bind="@txtModel.BackgroundColor" />
+
+                <label>BackgroundBorder:</label>
+                <input type="color" @bind="@txtModel.BackgroundBorder" />
+
+                <label>Border Px:</label>
+                <input type="number" @bind="@txtModel.BorderPix" />
+
+                <label>Border Radius:</label>
+                <input type="number" @bind="@txtModel.BorderRadius" />
+
+                
+            </div>
+            
+        }
+
+                @if (parentContainer == null) // Only for top level
+                {
+                    <select @onchange="(e) => ChangeTextAlign(box, e)" value="@box.TextAlign">
+                        <option value="left">Vänster</option>
+                        <option value="center">Center</option>
+                        <option value="right">Höger</option>
+                    </select>
+                    
+                    <button @onclick="() => MoveBoxUp(box)">Flytta Upp</button>
+                    <button @onclick="() => MoveBoxDown(box)">Flytta Ner</button>
+                    <button @onclick="() => MoveBoxLeft(box)">Flytta Vänster</button>
+                    <button @onclick="() => MoveBoxRight(box)">Flytta Höger</button>
+
+                    <button @onclick="() => RemoveBox(box)">Ta bort box</button>
+                }
+                else // Inner boxes
+                {
+                    <button @onclick="() => MoveInnerUp(box, parentContainer)">Flytta upp</button>
+                    <button @onclick="() => MoveInnerDown(box, parentContainer)">Flytta ner</button>
+                    <button @onclick="() => RemoveInnerBox(box, parentContainer)">Ta bort box</button>
+                    
+                    <select @onchange="(e) => ChangeTextAlign(box, e)" value="@box.TextAlign"> 
+                        <option value="left">Vänster</option>
+                        <option value="center">Center</option>
+                        <option value="right">Höger</option>
+                    </select>
+                    
+                    <select @onchange="(e) => ChangeContainer(box, e)" value="@box.SelectedContainerId">
+                        <option value="">Välj Container</option>
+                        @foreach (var c in containers)
+                        {
+                            <option value="@c.Id">@c.Title</option>
+                        }
+                    </select>
+                }
+            </div>
+        }
+    }
+
+    @if (box is SectionModel container)
+    {
+         <ul style="background-color:@container.BackgroundColor; 
+                    height:@($"{container.Height}px");
+                    
+                    
+                    border:@($"{container.BorderPix}px solid {container.BackgroundBorder}");">
+
+
+
+
+
+
+            @foreach (var innerBox in container.InnerBoxes)
+            {
+                @RenderContentItem(innerBox, container)
+            }
+        </ul>
+
+        @if (showButtons)
+        {
+            <button @onclick="() => AddInnerTextModel(container)">Lägg till Text Box i Container</button>
+            <button @onclick="() => AddInnerImageModel(container)">Lägg till Image Box i Container</button>
+
+            <button @onclick="() => RemoveContainer(container)">Ta bort Container</button>
+            <button @onclick="() => ClearContainer(container)">Rensa Innehåll</button>
+            <p>Container ID: @container.Id</p>
+            <div>
+                    <button @onclick="() => MoveBoxUp(box)">Flytta Upp</button>
+                    <button @onclick="() => MoveBoxDown(box)">Flytta Ner</button>
+                    <button @onclick="() => MoveBoxLeft(box)">Flytta Vänster</button>
+                    <button @onclick="() => MoveBoxRight(box)">Flytta Höger</button>
+                
+                <div>
+                    <label>Välj Storlek:</label>
+                    <input type="number" @bind="@container.Height" />
+                    <label>Välj Bakgrundsfärg:</label>
+                    <input type="color" @bind="@container.BackgroundColor" />
+                     <label>Välj Border Färg:</label>
+                    <input type="color" @bind="@container.BackgroundBorder" />
+                    <label>Välj Border storlek:</label>
+                    <input type="number" @bind="@container.BorderPix" />
+                 
+                </div>
+            </div>
+        }
+    }
+</li>;
+
+
+   
+
+    private void ChangeTextAlign(ContentModel box, ChangeEventArgs e)
+    {
+        box.TextAlign = e.Value.ToString(); // Update text alignment based on the selected value
+    }
+
+
+    private void HandleImageClick(ContentModel box)
+    {
+        // Kontrollera om boxen redan är i redigeringsläge
+        if (box.IsEditing)
+        {
+            return; // Gör ingenting om den redan är i redigeringsläge
+        }
+        ToggleEdit(box); // Annars aktivera redigering
+    }
+
+    private void ToggleEdit(ContentModel box)
+    {
+        box.IsEditing = !box.IsEditing; // Växlar redigeringstillståndet
+        if (box is TextModel || box is ImageModel) 
+        {
+            // Visa "Ändra"-knappen om redigering är aktiverad
+            box.ShowEditButton = !box.IsEditing;
+        }
+    }
+
+    private void Save(ContentModel box)
+    {
+        // Toggle back to original view
+        box.IsEditing = false; // Set editing to false
+        box.ShowEditButton = false; // Hide the edit button since we're toggling back
+    }
+
+    private void Changes(ContentModel box)
+    {
+        // Implement your save logic here, e.g., updating the model or saving changes
+        box.IsEditing = false; // Set editing to false after saving
+        box.ShowEditButton = true; // Show "Ändra" button again after saving
+    }
+
+    private void AddInnerTextModel(SectionModel container)
+    {
+        container.InnerBoxes.Add(new TextModel { Id = nextId++, Text = $"Inner Text Model {nextId}" });
+    }
+
+    private void AddInnerImageModel(SectionModel container)
+    {
+        container.InnerBoxes.Add(new ImageModel { Id = nextId++, ImageUrl = "https://via.placeholder.com/100" });
+    }
+
+  
+
+    private void MoveInnerUp(ContentModel box, SectionModel parentContainer)
+    {
+        int index = parentContainer.InnerBoxes.IndexOf(box);
+        if (index > 0)
+        {
+            parentContainer.InnerBoxes.RemoveAt(index);
+            parentContainer.InnerBoxes.Insert(index - 1, box);
+        }
+    }
+
+    private void MoveInnerDown(ContentModel box, SectionModel parentContainer)
+    {
+        int index = parentContainer.InnerBoxes.IndexOf(box);
+        if (index >= 0 && index < parentContainer.InnerBoxes.Count - 1)
+        {
+            parentContainer.InnerBoxes.RemoveAt(index);
+            parentContainer.InnerBoxes.Insert(index + 1, box);
+        }
+    }
+
+    private void RemoveBox(ContentModel box)
+    {
+        boxes.Remove(box);
+    }
+
+    private void RemoveInnerBox(ContentModel box, SectionModel parentContainer)
+    {
+        parentContainer.InnerBoxes.Remove(box);
+    }
+
+    private void RemoveContainer(SectionModel container)
+    {
+        boxes.Remove(container);
+        containers.Remove(container);
+    }
+
+    private void ClearContainer(SectionModel container)
+    {
+        container.InnerBoxes.Clear(); // Rensa alla inre boxar
+    }
+
+     private void ChangeContainer(ContentModel box, ChangeEventArgs e)
+    {
+        var selectedContainerIdStr = e.Value?.ToString();
+        if (string.IsNullOrEmpty(selectedContainerIdStr))
+        {
+            return; // Avbryt om inget värde är valt
+        }
+
+        int selectedContainerId = int.Parse(selectedContainerIdStr);
+        var targetContainer = containers.FirstOrDefault(c => c.Id == selectedContainerId);
+
+        SectionModel currentContainer = containers.FirstOrDefault(c => c.InnerBoxes.Contains(box));
+
+        if (targetContainer != null && !(box is SectionModel))
+        {
+            if (currentContainer != null)
+            {
+                currentContainer.InnerBoxes.Remove(box);
+            }
+
+            targetContainer.InnerBoxes.Add(box);
+            box.SelectedContainerId = targetContainer.Id; // Uppdatera vald container ID
+
+            StateHasChanged(); // Uppdatera UI
+        }
+    }
+}
