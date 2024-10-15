@@ -1,7 +1,16 @@
 ﻿@page "/"
+@rendermode InteractiveServer
+@using CMS.Server.Models
+@using CMS.Server.Components
 
-<PageTitle>Home</PageTitle>
+<h1>Drag and Drop Example</h1>
 
-<h1>Hello, world!</h1>
+<BoxList OnBoxSelected="HandleBoxSelected" />
 
-Welcome to your new app.
+@code {
+    private void HandleBoxSelected(ContentModel selectedBox)
+    {
+        // Gör något med den valda boxen, till exempel visa en meny
+        Console.WriteLine($"Selected Box: {selectedBox.GetContent()}");
+    }
+}

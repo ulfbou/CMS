@@ -1,0 +1,24 @@
+﻿.box-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.box {
+    border: 1px solid #ccc;
+    /* margin: 5px; */
+
+    cursor: move;
+}
+
+.content-menu {
+    margin-top: 0px;
+}
+
+ul {
+    list-style-type: none;
+    /* Tar bort punkterna */
+    padding: 0;
+    /* Tar bort inre marginaler om så önskas */
+    margin: 0;
+    /* Tar bort yttre marginaler om så önskas */
+}

@@ -1,18 +1,19 @@
 using Microsoft.AspNetCore.Components;
 
+namespace CMS.Server.Models;
 public class TextModel : ContentModel
 {
-    public string? Text { get; set; } 
+    public string? Text { get; set; }
     public bool IsBold { get; set; }
     public bool IsItalic { get; set; }
-   
+
     public int BorderRadius { get; set; } = 0; // Default border radius
     public string BackgroundColor { get; set; } = "#FFFFFF";
     public string BackgroundBorder { get; set; } = "#FFFFFF";
     public int BorderPix { get; set; } = 0;
-    public int? Padding { get; set; } 
-    public string Color { get; set; } ="#000000";
-    public int? FontSize { get; set; } 
+    public int? Padding { get; set; }
+    public string Color { get; set; } = "#000000";
+    public int? FontSize { get; set; }
 
     public override MarkupString GetContent()
     {
