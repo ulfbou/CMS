@@ -6,5 +6,9 @@ namespace CMS.Server.Components;
 
 public partial class BoxList : ComponentBase
 {
-    private ConfirmationDialog Confirmation { get; set; }
+    private ConfigurationDialog Configuration { get; set; }
+
+    private RenderFragment ConfigurationInput { get; set; }
+    private EventCallback OnConfigurationConfirm { get; set; }
+    private EventCallback OnConfigurationCancel { get; set; }
 }
