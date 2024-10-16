@@ -11,7 +11,7 @@ public class ImageModel : ContentModel
     public string BackgroundColor { get; set; } = "#FFFFFF";
     public string BackgroundBorder { get; set; } = "#FFFFFF";
     public int BorderPix { get; set; } = 0;
-    public int? Padding { get; set; }
+    public int Padding { get; set; } = 0;
 
     public override MarkupString GetContent()
     {

@@ -1,3 +1,4 @@
+@using CMS.Server.Components.Shared
 @using CMS.Server.Components.Shared.UI
 @using CMS.Server.Models
 
@@ -103,7 +104,6 @@
         }
     }
 
-
     private bool IsValidPosition(int row, int column)
     {
         // Set your grid boundaries, e.g., maxRows and maxColumns
@@ -135,7 +135,7 @@
         {
             <img src="@image.ImageUrl"
                  style="border-radius:@($"{image.BorderRadius}px");height:@($"{image.Height}px");width:@($"{image.Width}px");cursor: pointer;background-color:@image.BackgroundColor;padding:@($"{image.Padding}px");
-                                                                                                                                                                                                                                                                                                                                                                                                                                            border:@($"{image.BorderPix}px solid {image.BackgroundBorder}");"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    border:@($"{image.BorderPix}px solid {image.BackgroundBorder}");"
                  alt="Image" />
         }
         </div>
@@ -201,10 +201,10 @@
     @if (box is SectionModel container)
     {
         <ul style="background-color:@container.BackgroundColor;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    height:@($"{container.Height}px");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            height:@($"{container.Height}px");
 
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    border:@($"{container.BorderPix}px solid {container.BackgroundBorder}");">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            border:@($"{container.BorderPix}px solid {container.BackgroundBorder}");">
 
 
 
@@ -252,87 +252,20 @@
         <div>
             @if (box is ImageModel image)
         {
-            <div>
-                <label>Image URL:</label>
-                <input type="text" @bind="@image.ImageUrl" />
-                <br />
-
-                <label>Height:</label>
-                <input type="number" @bind="@image.Height" />
-                <br />
-
-                <label>Width:</label>
-                <input type="number" @bind="@image.Width" />
-                <br />
-
-                <label>Border Radius:</label>
-                <input type="number" @bind="@image.BorderRadius" />
-                <br />
-
-                <label>BackgroundColor:</label>
-                <input type="color" @bind="@image.BackgroundColor" />
-                <br />
-
-                <label>BackgroundBorder:</label>
-                <input type="color" @bind="@image.BackgroundBorder" />
-                <br />
-
-                <label>Border Px:</label>
-                <input type="number" @bind="@image.BorderPix" />
-                <br />
-
-                <label>Background Padding:</label>
-                <input type="number" @bind="@image.Padding" />
-            </div>
-
+            <ConfigureImageDialog Content="@image" OnClose="OnClose" />
         }
             @if (box is TextModel txtModel)
         {
-            <div>
-                <label>Text:</label>
-                <input type="text" @bind="@txtModel.Text" />
-                <br />
-                <label>FontSize:</label>
-                <input type="number" @bind="@txtModel.FontSize" />
-                <br />
-
-                <label>Color:</label>
-                <input type="color" @bind="@txtModel.Color" />
-                <br />
-
-                <label>Background Padding:</label>
-                <input type="number" @bind="@txtModel.Padding" />
-                <br />
-
-                <label>BackgroundColor:</label>
-                <input type="color" @bind="@txtModel.BackgroundColor" />
-                <br />
-
-                <label>BackgroundBorder:</label>
-                <input type="color" @bind="@txtModel.BackgroundBorder" />
-                <br />
-
-                <label>Border Px:</label>
-                <input type="number" @bind="@txtModel.BorderPix" />
-                <br />
-
-                <label>Border Radius:</label>
-                <input type="number" @bind="@txtModel.BorderRadius" />
-                <br />
-            </div>
-
+            <ConfigureTextDialog Content="@txtModel" OnClose="OnClose" />
         }
 
         </div>
     </div>;
 
-
-
     private void ChangeTextAlign(ContentModel box, ChangeEventArgs e)
     {
         box.TextAlign = e.Value.ToString(); // Update text alignment based on the selected value
     }
-
 
     private void HandleImageClick(ContentModel box)
     {

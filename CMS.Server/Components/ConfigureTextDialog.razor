@@ -1,0 +1,40 @@
+@using CMS.Server.Components.Shared
+@using CMS.Server.Models
+@using CMS.Server.Components
+@using Microsoft.AspNetCore.Components.Forms
+
+@page "/example"
+
+<div>
+
+    <label>Text:</label>
+    <InputText Value="@(Content.Text)" ValueChanged="@(e => Content.Text = e)" ValueExpression="@( () => Content.Text )" />
+    <br />
+    <label>FontSize:</label>
+    <InputNumber @bind-Value="@(Content.FontSize)" TValue="int" />
+    <br />
+
+    <label>Color:</label>
+    <input type="color" @bind="@(Content.Color)" />
+    <br />
+
+    <label>Background Padding:</label>
+    <InputNumber @bind-Value="@(Content.Padding)" TValue="int" />
+    <br />
+
+    <label>BackgroundColor:</label>
+    <input type="color" @bind="@Content.BackgroundColor" />
+    <br />
+
+    <label>BackgroundBorder:</label>
+    <input type="color" @bind="@Content.BackgroundBorder" />
+    <br />
+
+    <label>Border Px:</label>
+    <InputNumber @bind-Value="@(Content.BorderPix)" TValue="int" />
+    <br />
+
+    <label>Border Radius:</label>
+    <InputNumber @bind-Value="@(Content.BorderRadius)" TValue="int" />
+    <br />
+</div>

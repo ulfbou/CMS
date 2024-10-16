@@ -1,0 +1,30 @@
+@using CMS.Server.Components.Shared
+@using CMS.Server.Models
+@using CMS.Server.Components
+@using Microsoft.AspNetCore.Components.Forms
+
+<div>
+    <label>Image URL:</label>
+    <InputText @bind-Value="@Content.ImageUrl" />
+    <br />
+    <label>Height:</label>
+    <InputNumber @bind-Value="@Content.Height" TValue="int" />
+    <br />
+    <label>Width:</label>
+    <InputNumber @bind-Value="@Content.Width" TValue="int" />
+    <br />
+    <label>Border Radius:</label>
+    <InputNumber @bind-Value="@Content.BorderRadius" TValue="int" />
+    <br />
+    <label>BackgroundColor:</label>
+    <InputText @bind-Value="@Content.BackgroundColor" />
+    <br />
+    <label>BackgroundBorder:</label>
+    <InputText @bind-Value="@Content.BackgroundBorder" />
+    <br />
+    <label>Border Px:</label>
+    <InputNumber @bind-Value="@Content.BorderPix" TValue="int" />
+    <br />
+    <label>Background Padding:</label>
+    <InputNumber @bind-Value="@Content.Padding" TValue="int" />
+</div>
