@@ -40,6 +40,7 @@
     public EventCallback<ContentModel> OnBoxSelected { get; set; }
 
 
+
     private List<ContentModel> boxes = new List<ContentModel>();
     private List<SectionModel> containers = new List<SectionModel>();
     private int nextId = 1; // Startar från 1 för enklare nummer
@@ -56,6 +57,7 @@
         // Startar containrar med unika ID:n
         containers.Add(new SectionModel { Id = nextId++, Title = "Container 1", InnerBoxes = new List<ContentModel>() });
         containers.Add(new SectionModel { Id = nextId++, Title = "Container 2", InnerBoxes = new List<ContentModel>() });
+
     }
 
     private void ClearAll()
@@ -133,7 +135,7 @@
         {
             <img src="@image.ImageUrl"
                  style="border-radius:@($"{image.BorderRadius}px");height:@($"{image.Height}px");width:@($"{image.Width}px");cursor: pointer;background-color:@image.BackgroundColor;padding:@($"{image.Padding}px");
-                                                                                                                                                                                                                                                                                                                        border:@($"{image.BorderPix}px solid {image.BackgroundBorder}");"
+                                                                                                                                                                                                                                                                                                                                                                                                                                            border:@($"{image.BorderPix}px solid {image.BackgroundBorder}");"
                  alt="Image" />
         }
         </div>
@@ -149,11 +151,15 @@
             <option value="center">Center</option>
             <option value="right">Höger</option>
         </select>
+        <br />
 
         <button @onclick="() => MoveBoxUp(box)">Flytta Upp</button>
         <button @onclick="() => MoveBoxDown(box)">Flytta Ner</button>
+        <br />
+
         <button @onclick="() => MoveBoxLeft(box)">Flytta Vänster</button>
         <button @onclick="() => MoveBoxRight(box)">Flytta Höger</button>
+        <br />
 
         <button @onclick="() => RemoveBox(box)">Ta bort box</button>
     }
@@ -183,82 +189,22 @@
     // Display only when not in edit mode
     @if (box.ShowEditButton)
     {
-        <button @onclick="() => ToggleEdit(box)">Spara</button>
-        <div>
-            @if (box is ImageModel image)
-        {
-            <div>
-                <label>Image URL:</label>
-                <input type="text" @bind="@image.ImageUrl" />
+    // TODO: Remember the current state in order to restore on cancel.
+    ConfigurationInput = RenderConfiguration(box);
+    OnConfigurationCancel = EventCallback.Factory.Create(this, () => ToggleEdit(box));
+    OnConfigurationConfirm = EventCallback.Factory.Create(this, () => ToggleEdit(box));
 
-                <label>Height:</label>
-                <input type="number" @bind="@image.Height" />
-
-                <label>Width:</label>
-                <input type="number" @bind="@image.Width" />
-
-                <label>Border Radius:</label>
-                <input type="number" @bind="@image.BorderRadius" />
-
-                <label>BackgroundColor:</label>
-                <input type="color" @bind="@image.BackgroundColor" />
-
-                <label>BackgroundBorder:</label>
-                <input type="color" @bind="@image.BackgroundBorder" />
-
-                <label>Border Px:</label>
-                <input type="number" @bind="@image.BorderPix" />
-
-                <label>Background Padding:</label>
-                <input type="number" @bind="@image.Padding" />
-            </div>
-
-        }
-            @if (box is TextModel txtModel)
-        {
-            <div>
-                <label>Text:</label>
-                <input type="text" @bind="@txtModel.Text" />
-
-                <label>FontSize:</label>
-                <input type="number" @bind="@txtModel.FontSize" />
-
-
-
-                <label>Color:</label>
-                <input type="color" @bind="@txtModel.Color" />
-
-                <label>Background Padding:</label>
-                <input type="number" @bind="@txtModel.Padding" />
-
-                <label>BackgroundColor:</label>
-                <input type="color" @bind="@txtModel.BackgroundColor" />
-
-                <label>BackgroundBorder:</label>
-                <input type="color" @bind="@txtModel.BackgroundBorder" />
-
-                <label>Border Px:</label>
-                <input type="number" @bind="@txtModel.BorderPix" />
-
-                <label>Border Radius:</label>
-                <input type="number" @bind="@txtModel.BorderRadius" />
-
-
-            </div>
-
-        }
-
-        </div>
+    Configuration.Show();
     }
     }
 
     @if (box is SectionModel container)
     {
         <ul style="background-color:@container.BackgroundColor;
-                                                                                                                                                                                                                                                                                                                                height:@($"{container.Height}px");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    height:@($"{container.Height}px");
 
 
-                                                                                                                                                                                                                                                                                                                                border:@($"{container.BorderPix}px solid {container.BackgroundBorder}");">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    border:@($"{container.BorderPix}px solid {container.BackgroundBorder}");">
 
 
 
@@ -299,8 +245,86 @@
         </div>
     }
     }
-    </li>;
+    </li>
+    ;
 
+    private RenderFragment RenderConfiguration(ContentModel box) =>@<div>
+        <div>
+            @if (box is ImageModel image)
+        {
+            <div>
+                <label>Image URL:</label>
+                <input type="text" @bind="@image.ImageUrl" />
+                <br />
+
+                <label>Height:</label>
+                <input type="number" @bind="@image.Height" />
+                <br />
+
+                <label>Width:</label>
+                <input type="number" @bind="@image.Width" />
+                <br />
+
+                <label>Border Radius:</label>
+                <input type="number" @bind="@image.BorderRadius" />
+                <br />
+
+                <label>BackgroundColor:</label>
+                <input type="color" @bind="@image.BackgroundColor" />
+                <br />
+
+                <label>BackgroundBorder:</label>
+                <input type="color" @bind="@image.BackgroundBorder" />
+                <br />
+
+                <label>Border Px:</label>
+                <input type="number" @bind="@image.BorderPix" />
+                <br />
+
+                <label>Background Padding:</label>
+                <input type="number" @bind="@image.Padding" />
+            </div>
+
+        }
+            @if (box is TextModel txtModel)
+        {
+            <div>
+                <label>Text:</label>
+                <input type="text" @bind="@txtModel.Text" />
+                <br />
+                <label>FontSize:</label>
+                <input type="number" @bind="@txtModel.FontSize" />
+                <br />
+
+                <label>Color:</label>
+                <input type="color" @bind="@txtModel.Color" />
+                <br />
+
+                <label>Background Padding:</label>
+                <input type="number" @bind="@txtModel.Padding" />
+                <br />
+
+                <label>BackgroundColor:</label>
+                <input type="color" @bind="@txtModel.BackgroundColor" />
+                <br />
+
+                <label>BackgroundBorder:</label>
+                <input type="color" @bind="@txtModel.BackgroundBorder" />
+                <br />
+
+                <label>Border Px:</label>
+                <input type="number" @bind="@txtModel.BorderPix" />
+                <br />
+
+                <label>Border Radius:</label>
+                <input type="number" @bind="@txtModel.BorderRadius" />
+                <br />
+            </div>
+
+        }
+
+        </div>
+    </div>;
 
 
 
