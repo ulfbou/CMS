@@ -80,31 +80,6 @@
         boxes.Add(new ImageModel { Id = nextId++, ImageUrl = "https://via.placeholder.com/100" });
     }
 
-    <!-- private void MoveBoxUp(ContentModel box)
-    {
-    if (box.Row > 1)
-    {
-    box.Row--;
-    }
-    }
-
-    private void MoveBoxDown(ContentModel box)
-    {
-    box.Row++;
-    }
-
-    private void MoveBoxLeft(ContentModel box)
-    {
-    if (box.Column > 1)
-    {
-    box.Column--;
-    }
-    }
-
-    private void MoveBoxRight(ContentModel box)
-    {
-    box.Column++;
-    } -->
     private void MoveBox(ContentModel box, int rowChange, int columnChange)
     {
         int oldRow = box.Row;
@@ -154,24 +129,24 @@
         {
             <span style="border-radius:@($"{textModel.BorderRadius}px");
 
-                                                                                                                                                                                                                                                color:@($"{textModel.Color}");
-                                                                                                                                                                                                                                                font-size:@($"{textModel.FontSize}px");
+                                                                                                                                                                                                                                                                color:@($"{textModel.Color}");
+                                                                                                                                                                                                                                                                font-size:@($"{textModel.FontSize}px");
 
-                                                                                                                                                                                                                                                cursor: pointer;
-                                                                                                                                                                                                                                                background-color:@textModel.BackgroundColor;
-                                                                                                                                                                                                                                                padding:@($"{textModel.Padding}px");
-                                                                                                                                                                                                                                                border:@($"{textModel.BorderPix}px solid {textModel.BackgroundBorder}");">@textModel.Text</span>
+                                                                                                                                                                                                                                                                cursor: pointer;
+                                                                                                                                                                                                                                                                background-color:@textModel.BackgroundColor;
+                                                                                                                                                                                                                                                                padding:@($"{textModel.Padding}px");
+                                                                                                                                                                                                                                                                border:@($"{textModel.BorderPix}px solid {textModel.BackgroundBorder}");">@textModel.Text</span>
         }
         else if (box is ImageModel image)
         {
             <img src="@image.ImageUrl"
                  style="border-radius:@($"{image.BorderRadius}px");
-                                                                                                                                                                                                                                                height:@($"{image.Height}px");
-                                                                                                                                                                                                                                                width:@($"{image.Width}px");
-                                                                                                                                                                                                                                                cursor: pointer;
-                                                                                                                                                                                                                                                background-color:@image.BackgroundColor;
-                                                                                                                                                                                                                                                padding:@($"{image.Padding}px");
-                                                                                                                                                                                                                                                border:@($"{image.BorderPix}px solid {image.BackgroundBorder}");"
+                                                                                                                                                                                                                                                                height:@($"{image.Height}px");
+                                                                                                                                                                                                                                                                width:@($"{image.Width}px");
+                                                                                                                                                                                                                                                                cursor: pointer;
+                                                                                                                                                                                                                                                                background-color:@image.BackgroundColor;
+                                                                                                                                                                                                                                                                padding:@($"{image.Padding}px");
+                                                                                                                                                                                                                                                                border:@($"{image.BorderPix}px solid {image.BackgroundBorder}");"
                  alt="Image" />
 
 
@@ -297,10 +272,10 @@
     @if (box is SectionModel container)
     {
         <ul style="background-color:@container.BackgroundColor;
-                                                                                                                                                                                                                                                        height:@($"{container.Height}px");
+                                                                                                                                                                                                                                                                        height:@($"{container.Height}px");
 
 
-                                                                                                                                                                                                                                                        border:@($"{container.BorderPix}px solid {container.BackgroundBorder}");">
+                                                                                                                                                                                                                                                                        border:@($"{container.BorderPix}px solid {container.BackgroundBorder}");">
 
 
 
