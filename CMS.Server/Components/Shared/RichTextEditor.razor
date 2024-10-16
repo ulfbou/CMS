@@ -2,11 +2,6 @@
 @using PSC.Blazor.Components.MarkdownEditor
 @using PSC.Blazor.Components.MarkdownEditor.Enums
 
-<ConfirmationDialog @ref="Confirmation"
-                    ConfirmationButtonText="Spara"
-                    CancelButtonText="Avbryt"
-                    OnConfirm="async () => await SaveAsync()"
-                    OnCancel="Cancel">
     @if (_showEditor)
     {
         <div class="richtext-editor-container">
@@ -141,4 +136,3 @@
             }
         </div>
     }
-</ConfirmationDialog>

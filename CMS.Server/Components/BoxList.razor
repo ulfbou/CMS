@@ -1,5 +1,6 @@
 @using CMS.Server.Components.Shared.UI
 @using CMS.Server.Models
+@using CMS.Server.Components.Shared
 
 <h3>Skapa nya boxar:</h3>
 <button @onclick="ToggleButtonsVisibility">
@@ -36,6 +37,11 @@
 
 
 @code {
+
+    private RichTextEditor Editor { get; set; }
+
+    private string Content { get; set; } = "Hello, world!";
+
     [Parameter]
     public EventCallback<ContentModel> OnBoxSelected { get; set; }
 
@@ -319,6 +325,9 @@
                 <label>Border Radius:</label>
                 <input type="number" @bind="@txtModel.BorderRadius" />
                 <br />
+
+                <RichTextEditor @ref="Editor" Content="@Content" EditorTheme="light" ContentChanged="(content) => Content = content" />
+
             </div>
 
         }

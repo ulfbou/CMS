@@ -1,11 +1,14 @@
 ﻿@page "/"
 @rendermode InteractiveServer
+
 @using CMS.Server.Models
 @using CMS.Server.Components
 
 <h1>Drag and Drop Example</h1>
 
-<BoxList OnBoxSelected="HandleBoxSelected" />
+@* <BoxList OnBoxSelected="HandleBoxSelected" /> *@
+
+<!-- <RichTextEditor @ref="Editor" Content="@Content" EditorTheme="light" ContentChanged="(content) => Content = content" /> -->
 
 @code {
     private void HandleBoxSelected(ContentModel selectedBox)
@@ -13,4 +16,10 @@
         // Gör något med den valda boxen, till exempel visa en meny
         Console.WriteLine($"Selected Box: {selectedBox.GetContent()}");
     }
+
+    <!-- private RichTextEditor Editor { get; set; }
+
+    private string Content { get; set; } = "Hello, world!"; -->
 }
+
+<BoxList OnBoxSelected="HandleBoxSelected" />
