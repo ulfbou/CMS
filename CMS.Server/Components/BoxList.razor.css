@@ -5,7 +5,10 @@ li{
 }
 
 
-
+.box-grid li * {
+  margin: 0;
+  padding: 0;
+}
 
 .box-grid {
   display: grid;
@@ -17,4 +20,8 @@ li{
   padding: 0;
   margin: 0;
   /* Adjust gap between boxes */
+}
+
+.grid-item {
+  min-height: 100%;
 }
