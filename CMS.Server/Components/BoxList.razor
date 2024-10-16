@@ -127,38 +127,56 @@
     <div @onclick="() => HandleImageClick(box)" style="text-align:@box.TextAlign;">
         @if (box is TextModel textModel)
         {
-            <span style="border-radius:@($"{textModel.BorderRadius}px");
-
-                                                                                                                                                                                                                                                                color:@($"{textModel.Color}");
-                                                                                                                                                                                                                                                                font-size:@($"{textModel.FontSize}px");
-
-                                                                                                                                                                                                                                                                cursor: pointer;
-                                                                                                                                                                                                                                                                background-color:@textModel.BackgroundColor;
-                                                                                                                                                                                                                                                                padding:@($"{textModel.Padding}px");
-                                                                                                                                                                                                                                                                border:@($"{textModel.BorderPix}px solid {textModel.BackgroundBorder}");">@textModel.Text</span>
+            <span style="border-radius:@($"{textModel.BorderRadius}px");color:@($"{textModel.Color}");font-size:@($"{textModel.FontSize}px");cursor: pointer;background-color:@textModel.BackgroundColor;padding:@($"{textModel.Padding}px");border:@($"{textModel.BorderPix}px solid {textModel.BackgroundBorder}");">@textModel.Text</span>
         }
         else if (box is ImageModel image)
         {
             <img src="@image.ImageUrl"
-                 style="border-radius:@($"{image.BorderRadius}px");
-                                                                                                                                                                                                                                                                height:@($"{image.Height}px");
-                                                                                                                                                                                                                                                                width:@($"{image.Width}px");
-                                                                                                                                                                                                                                                                cursor: pointer;
-                                                                                                                                                                                                                                                                background-color:@image.BackgroundColor;
-                                                                                                                                                                                                                                                                padding:@($"{image.Padding}px");
-                                                                                                                                                                                                                                                                border:@($"{image.BorderPix}px solid {image.BackgroundBorder}");"
+                 style="border-radius:@($"{image.BorderRadius}px");height:@($"{image.Height}px");width:@($"{image.Width}px");cursor: pointer;background-color:@image.BackgroundColor;padding:@($"{image.Padding}px");
+                                                                                                                                                                                                                                                                                                                        border:@($"{image.BorderPix}px solid {image.BackgroundBorder}");"
                  alt="Image" />
-
-
         }
         </div>
 
     @if (box.IsEditing)
     {
-
-
         <button @onclick="() => Changes(box)">Ändra</button>
         <button @onclick="() => Save(box)">Spara</button>
+    @if (parentContainer == null) // Only for top level
+    {
+        <select @onchange="(e) => ChangeTextAlign(box, e)" value="@box.TextAlign">
+            <option value="left">Vänster</option>
+            <option value="center">Center</option>
+            <option value="right">Höger</option>
+        </select>
+
+        <button @onclick="() => MoveBoxUp(box)">Flytta Upp</button>
+        <button @onclick="() => MoveBoxDown(box)">Flytta Ner</button>
+        <button @onclick="() => MoveBoxLeft(box)">Flytta Vänster</button>
+        <button @onclick="() => MoveBoxRight(box)">Flytta Höger</button>
+
+        <button @onclick="() => RemoveBox(box)">Ta bort box</button>
+    }
+    else // Inner boxes
+    {
+        <button @onclick="() => MoveInnerUp(box, parentContainer)">Flytta upp</button>
+        <button @onclick="() => MoveInnerDown(box, parentContainer)">Flytta ner</button>
+        <button @onclick="() => RemoveInnerBox(box, parentContainer)">Ta bort box</button>
+
+        <select @onchange="(e) => ChangeTextAlign(box, e)" value="@box.TextAlign">
+            <option value="left">Vänster</option>
+            <option value="center">Center</option>
+            <option value="right">Höger</option>
+        </select>
+
+        <select @onchange="(e) => ChangeContainer(box, e)" value="@box.SelectedContainerId">
+            <option value="">Välj Container</option>
+            @foreach (var c in containers)
+        {
+            <option value="@c.Id">@c.Title</option>
+        }
+        </select>
+    }
     }
     else
     {
@@ -230,41 +248,6 @@
 
         }
 
-            @if (parentContainer == null) // Only for top level
-        {
-            <select @onchange="(e) => ChangeTextAlign(box, e)" value="@box.TextAlign">
-                <option value="left">Vänster</option>
-                <option value="center">Center</option>
-                <option value="right">Höger</option>
-            </select>
-
-            <button @onclick="() => MoveBoxUp(box)">Flytta Upp</button>
-            <button @onclick="() => MoveBoxDown(box)">Flytta Ner</button>
-            <button @onclick="() => MoveBoxLeft(box)">Flytta Vänster</button>
-            <button @onclick="() => MoveBoxRight(box)">Flytta Höger</button>
-
-            <button @onclick="() => RemoveBox(box)">Ta bort box</button>
-        }
-        else // Inner boxes
-        {
-            <button @onclick="() => MoveInnerUp(box, parentContainer)">Flytta upp</button>
-            <button @onclick="() => MoveInnerDown(box, parentContainer)">Flytta ner</button>
-            <button @onclick="() => RemoveInnerBox(box, parentContainer)">Ta bort box</button>
-
-            <select @onchange="(e) => ChangeTextAlign(box, e)" value="@box.TextAlign">
-                <option value="left">Vänster</option>
-                <option value="center">Center</option>
-                <option value="right">Höger</option>
-            </select>
-
-            <select @onchange="(e) => ChangeContainer(box, e)" value="@box.SelectedContainerId">
-                <option value="">Välj Container</option>
-                @foreach (var c in containers)
-            {
-                <option value="@c.Id">@c.Title</option>
-            }
-            </select>
-        }
         </div>
     }
     }
@@ -272,10 +255,10 @@
     @if (box is SectionModel container)
     {
         <ul style="background-color:@container.BackgroundColor;
-                                                                                                                                                                                                                                                                        height:@($"{container.Height}px");
+                                                                                                                                                                                                                                                                                                                                height:@($"{container.Height}px");
 
 
-                                                                                                                                                                                                                                                                        border:@($"{container.BorderPix}px solid {container.BackgroundBorder}");">
+                                                                                                                                                                                                                                                                                                                                border:@($"{container.BorderPix}px solid {container.BackgroundBorder}");">
 
 
 
