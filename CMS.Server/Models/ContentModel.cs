@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+
 namespace CMS.Server.Models;
 public abstract class ContentModel
 {
@@ -7,6 +8,15 @@ public abstract class ContentModel
     public bool IsEditing { get; set; } = false;
     public bool ShowEditButton { get; set; }
     public abstract MarkupString GetContent();
+
+    public virtual ContentModel Clone(int col, int row)
+    {
+        var clone = (ContentModel)MemberwiseClone();
+        clone.Column = col;
+        clone.Row = row;
+        return clone;
+    }
+
     public string TextAlign { get; set; } = "left"; // Default alignment
 
 

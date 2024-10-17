@@ -10,8 +10,4 @@
     <PackageReference Include="Markdig" Version="0.37.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\PSC.Blazor.Components.MarkdownEditor\PSC.Blazor.Components.MarkdownEditor.csproj" />
-  </ItemGroup>
-
 </Project>

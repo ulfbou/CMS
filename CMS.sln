@@ -5,8 +5,6 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CMS.Server", "CMS.Server\CMS.Server.csproj", "{8204738A-89C7-4677-8135-EC4C5E86170B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PSC.Blazor.Components.MarkdownEditor", "PSC.Blazor.Components.MarkdownEditor\PSC.Blazor.Components.MarkdownEditor.csproj", "{90F49670-D05B-4EB0-9DA9-9466973950B8}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,12 +15,11 @@ Global
 		{8204738A-89C7-4677-8135-EC4C5E86170B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8204738A-89C7-4677-8135-EC4C5E86170B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8204738A-89C7-4677-8135-EC4C5E86170B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{90F49670-D05B-4EB0-9DA9-9466973950B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{90F49670-D05B-4EB0-9DA9-9466973950B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{90F49670-D05B-4EB0-9DA9-9466973950B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{90F49670-D05B-4EB0-9DA9-9466973950B8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {559042A8-5405-415C-82B7-C6F97569EEB2}
 	EndGlobalSection
 EndGlobal
