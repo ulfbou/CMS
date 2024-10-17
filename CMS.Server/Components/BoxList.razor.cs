@@ -22,15 +22,6 @@ public partial class BoxList : ComponentBase
 
     protected override void OnInitialized()
     {
-        // Lägg till några förvalda boxar och containrar
-        boxes.Add(new TextModel { Id = nextId++, Text = "Text Box 1" });
-        boxes.Add(new ImageModel { Id = nextId++, ImageUrl = "https://via.placeholder.com/100" });
-        boxes.Add(new TextModel { Id = nextId++, Text = "Text Box 2" });
-        boxes.Add(new ImageModel { Id = nextId++, ImageUrl = "https://via.placeholder.com/100" });
-
-        // Startar containrar med unika ID:n
-        containers.Add(new SectionModel { Id = nextId++, Title = "Container 1", InnerBoxes = new List<ContentModel>() });
-        containers.Add(new SectionModel { Id = nextId++, Title = "Container 2", InnerBoxes = new List<ContentModel>() });
     }
 
     private void ClearAll()
@@ -114,14 +105,28 @@ public partial class BoxList : ComponentBase
         }
     }
 
-    private void CloneContainer(ContentModel box)
+    private void CloneBox(ContentModel box)
     {
         for (int col = 1; col <= maxColumns; col++)
         {
             if (col == box.Column) continue;
             var clone = box.Clone(col, box.Row);
+            clone.Id = nextId++;
             boxes.Add(clone);
         }
+    }
+
+    private void CloneSection(SectionModel box)
+    {
+        int init = containers.Count();
+        for (int col = 1; col <= maxColumns; col++)
+        {
+            if (col == box.Column) continue;
+            var clone = (SectionModel)box.Clone(col, box.Row);
+            clone.Id = nextId++;
+            boxes.Add(clone);
+        }
+        int outro = containers.Count();
     }
 
     private void RemoveBox(ContentModel box)

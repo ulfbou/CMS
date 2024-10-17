@@ -38,18 +38,8 @@
 @code {
     private RenderFragment RenderContentItem(ContentModel box, SectionModel? parentContainer) => @<li>
     <div @onclick="() => HandleImageClick(box)" style="text-align:@box.TextAlign;">
-        @if (box is TextModel textModel)
-        {
-            <span style="border-radius:@($"{textModel.BorderRadius}px");color:@($"{textModel.Color}");font-size:@($"{textModel.FontSize}px");cursor: pointer;background-color:@textModel.BackgroundColor;padding:@($"{textModel.Padding}px");border:@($"{textModel.BorderPix}px solid {textModel.BackgroundBorder}");">@textModel.Text</span>
-        }
-        else if (box is ImageModel image)
-        {
-            <img src="@image.ImageUrl"
-                 style="border-radius:@($"{image.BorderRadius}px");height:@($"{image.Height}px");width:@($"{image.Width}px");cursor: pointer;background-color:@image.BackgroundColor;padding:@($"{image.Padding}px");
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            border:@($"{image.BorderPix}px solid {image.BackgroundBorder}");"
-                 alt="Image" />
-        }
-        </div>
+        @box.GetContent()
+    </div>
 
     @if (box.IsEditing)
     {
@@ -83,7 +73,7 @@
         <button @onclick="() => MoveBoxRight(box)">Flytta Höger</button>
     }
         <br />
-        <button @onclick="() => CloneContainer(box)">Klona Box</button>
+        <button @onclick="() => CloneBox(box)">Klona Box</button>
         <button @onclick="() => RemoveBox(box)">Ta bort box</button>
     }
     else // Inner boxes
@@ -123,17 +113,7 @@
 
     @if (box is SectionModel container)
     {
-        <ul style="background-color:@container.BackgroundColor;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    height:@($"{container.Height}px");
-
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    border:@($"{container.BorderPix}px solid {container.BackgroundBorder}");">
-
-
-
-
-
-
+        <ul style="background-color:@container.BackgroundColor;height:@($"{container.Height}px");border:@($"{container.BorderPix}px solid {container.BackgroundBorder}");">
             @foreach (var innerBox in container.InnerBoxes)
         {
             @RenderContentItem(innerBox, container)
@@ -145,26 +125,26 @@
         <button @onclick="() => AddInnerTextModel(container)">Lägg till Text Box i Container</button>
         <button @onclick="() => AddInnerImageModel(container)">Lägg till Image Box i Container</button>
         <br />
-        <button @onclick="() => CloneContainer(container)">Klona Containern</button>
+        <button @onclick="() => CloneSection(container)">Klona Containern</button>
         <button @onclick="() => RemoveContainer(container)">Ta bort Container</button>
         <button @onclick="() => ClearContainer(container)">Rensa Innehåll</button>
         <p>Container ID: @container.Id</p>
         <div>
-            @if (CanMoveBox(box, -1, 0))
+            @if (CanMoveBox(container, -1, 0))
         {
-            <button @onclick="() => MoveBoxUp(box)">Flytta Upp</button>
+            <button @onclick="() => MoveBoxUp(container)">Flytta Upp</button>
         }
-            @if (CanMoveBox(box, 1, 0))
+            @if (CanMoveBox(container, 1, 0))
         {
-            <button @onclick="() => MoveBoxDown(box)">Flytta Ner</button>
+            <button @onclick="() => MoveBoxDown(container)">Flytta Ner</button>
         }
-            @if (CanMoveBox(box, 0, -1))
+            @if (CanMoveBox(container, 0, -1))
         {
-            <button @onclick="() => MoveBoxLeft(box)">Flytta Vänster</button>
+            <button @onclick="() => MoveBoxLeft(container)">Flytta Vänster</button>
         }
-            @if (CanMoveBox(box, 0, 1))
+            @if (CanMoveBox(container, 0, 1))
         {
-            <button @onclick="() => MoveBoxRight(box)">Flytta Höger</button>
+            <button @onclick="() => MoveBoxRight(container)">Flytta Höger</button>
         }
 
             <div>
@@ -172,10 +152,10 @@
                 <input type="number" @bind="@container.Height" />
                 <label>Välj Bakgrundsfärg:</label>
                 <input type="color" @bind="@container.BackgroundColor" />
-                <label>Välj Border Färg:</label>
-                <input type="color" @bind="@container.BackgroundBorder" />
                 <label>Välj Border storlek:</label>
                 <input type="number" @bind="@container.BorderPix" />
+                <label>Välj Border Färg:</label>
+                <input type="color" @bind="@container.BackgroundBorder" />
 
             </div>
         </div>
@@ -187,75 +167,68 @@
         <div>
             @if (box is ImageModel image)
         {
-            <div>
-                <label>Image URL:</label>
-                <input type="text" @bind="@image.ImageUrl" />
-                <br />
+            <label>Image URL:</label>
+            <input type="text" @bind="@image.ImageUrl" />
+            <br />
 
-                <label>Height:</label>
-                <input type="number" @bind="@image.Height" />
-                <br />
+            <label>Height:</label>
+            <input type="number" @bind="@image.Height" />
+            <br />
 
-                <label>Width:</label>
-                <input type="number" @bind="@image.Width" />
-                <br />
-
-                <label>Border Radius:</label>
-                <input type="number" @bind="@image.BorderRadius" />
-                <br />
-
-                <label>BackgroundColor:</label>
-                <input type="color" @bind="@image.BackgroundColor" />
-                <br />
-
-                <label>BackgroundBorder:</label>
-                <input type="color" @bind="@image.BackgroundBorder" />
-                <br />
-
-                <label>Border Px:</label>
-                <input type="number" @bind="@image.BorderPix" />
-                <br />
-
-                <label>Background Padding:</label>
-                <input type="number" @bind="@image.Padding" />
-            </div>
+            <label>Width:</label>
+            <input type="number" @bind="@image.Width" />
+            <br />
         }
             @if (box is TextModel txtModel)
         {
-            <div>
-                <label>Text:</label>
-                <input type="text" @bind="@txtModel.Text" />
-                <br />
-                <label>FontSize:</label>
-                <input type="number" @bind="@txtModel.FontSize" />
-                <br />
+            <label>Text:</label>
+            <input type="text" @bind="@txtModel.Text" />
+            <br />
+            <label>FontSize:</label>
+            <input type="number" @bind="@txtModel.FontSize" />
+            <br />
 
-                <label>Color:</label>
-                <input type="color" @bind="@txtModel.Color" />
-                <br />
-
-                <label>Background Padding:</label>
-                <input type="number" @bind="@txtModel.Padding" />
-                <br />
-
-                <label>BackgroundColor:</label>
-                <input type="color" @bind="@txtModel.BackgroundColor" />
-                <br />
-
-                <label>BackgroundBorder:</label>
-                <input type="color" @bind="@txtModel.BackgroundBorder" />
-                <br />
-
-                <label>Border Px:</label>
-                <input type="number" @bind="@txtModel.BorderPix" />
-                <br />
-
-                <label>Border Radius:</label>
-                <input type="number" @bind="@txtModel.BorderRadius" />
-                <br />
-            </div>
+            <label>Color:</label>
+            <input type="color" @bind="@txtModel.Color" />
+            <br />
         }
 
+            <label>Padding:</label>
+            <input type="number" @bind="@box.Padding" />
+            <br />
+
+            <label>Margin top:</label>
+            <input type="number" @bind="@box.MarginTop" />
+            <br />
+
+            <label>Margin bottom:</label>
+            <input type="number" @bind="@box.MarginBottom" />
+            <br />
+
+            <label>Margin left:</label>
+            <input type="number" @bind="@box.MarginLeft" />
+            <br />
+
+            <label>Margin right:</label>
+            <input type="number" @bind="@box.MarginRight" />
+            <br />
+
+            <label>BackgroundColor:</label>
+            <input type="color" @bind="@box.BackgroundColor" />
+            <br />
+
+            <label>Border color:</label>
+            <input type="color" @bind="@box.BackgroundBorder" />
+            <br />
+
+            <label>Border size:</label>
+            <input type="number" @bind="@box.BorderPix" />
+            <br />
+
+            <label>Border Radius:</label>
+            <input type="number" @bind="@box.BorderRadius" />
+            <br />
         </div>
+
     </div>;
 }

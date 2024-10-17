@@ -12,13 +12,7 @@ public class SectionModel : ContentModel
     public string BackgroundColor { get; set; } = "#FFFFFF";
     public string BackgroundBorder { get; set; } = "#FFFFFF";
     public int BorderPix { get; set; } = 0;
-    public int? Height { get; set; }
-
-
-
-
-
-
+    public int? Height { get; set; } = 100;
 
     public int? SelectedInnerBoxId
     {
